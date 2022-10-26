@@ -136,6 +136,98 @@ function displayMoves(id){
     }
 }
 
+function getCaptures(id){
+    // gets the available capture points for any point.
+    let possibleMoves;
+    let captureLocations;
+    let val = parseInt(id.split('_').pop());
+    if (player === 0){
+        if (id[0] === 'r'){
+            let x = red[val][0];
+            let y = red[val][1];
+            if (x==-2){return [];}
+            possibleMoves = [
+                [x-2,y-2], // red moves "up"
+                [x+2,y-2]
+            ];
+            captureLocations = [
+                [x-1,y-1],
+                [x+1,y-1]
+            ]
+            if (red[val].length>2){ // King
+                possibleMoves = [
+                    [x-2,y-2],[x+2,y-2],[x+2,y+2],[x-2,y+2]
+                ]
+                captureLocations = [
+                    [x-1,y-1],[x+1,y-1],[x+1,y+1],[x-1,y+1]
+                ]
+            }
+        }
+    }
+    else{
+        if (id[0] === 'b'){
+            let x = blue[val][0];
+            let y = blue[val][1];
+            if (x==-1){return [];}
+            possibleMoves = [
+                [x-2,y+2],
+                [x+2,y+2]
+            ]
+            captureLocations = [
+                [x-1,y+1],
+                [x+1,y+1]
+            ]
+            if (blue[val].length>2){ // King
+                possibleMoves = [
+                    [x-2,y-2],[x+2,y-2],[x+2,y+2],[x-2,y+2]
+                ]
+                captureLocations = [
+                    [x-1,y-1],[x+1,y-1],[x+1,y+1],[x-1,y+1]
+                ]
+            }
+        }
+    }
+    let res = [];
+    if (possibleMoves){
+        for (let j=0; j<possibleMoves.length; j++){
+            let i = possibleMoves[j];
+            let k = captureLocations[j];
+            if (i[0]<rows && 0<=i[0] && 0<=i[1] && i[1]<rows){
+                if (!pointInArray(red,i)&&!pointInArray(blue,i)){
+                    if ((pointInArray(red,k)&&player===1)||(pointInArray(blue,k)&&player===0)){
+                        let captured;
+                        if (player===0){
+                            captured = blue.findIndex(item => item[0]===k[0]&&item[1]===k[1]);
+                        }
+                        else{
+                            captured = red.findIndex(item => item[0]===k[0]&&item[1]===k[1]);
+                        }
+                        res.push([i,captured]);
+                    }
+                }            
+            }
+        }        
+    }
+    //console.log("captures: ",res,id)
+    return res;
+}
+
+function displayCaptures(id){
+    removeElementsByClass("ghost"); // First remove all existing ghosts
+    let res = getCaptures(id);
+    let val = parseInt(id.split('_').pop());
+    if (res){
+        for (let m of res){
+            board.innerHTML += `
+            <img class="ghost" src="assets/ghost.png"
+            draggable=false
+            style="width:${100/rows}%;
+            top:${m[0][1]/rows*100}%;
+            left:${m[0][0]/rows*100}%"
+            onclick="move(${val},${m[0][0]},${m[0][1]});capture(${val},${m[1]});">`;
+        }        
+    }
+}
 
 function move(val,x,y){
     if (player == 0){
