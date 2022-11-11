@@ -2,6 +2,11 @@ html,body{
     padding:0px;
     margin:0px;
     font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+   background-image: url("assets/bg.png"); /* The image used */
+  background-color: #cccccc; /* Used if the image is unavailable */
+  background-position: center; /* Center the image */
+  background-repeat: no-repeat; /* Do not repeat the image */
+  background-size: cover; /* Resize the background image to cover the entire container */
 }
 #main-container{
     padding-left:31%;
